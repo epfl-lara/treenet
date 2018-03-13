@@ -10,7 +10,7 @@ from treenet.treenet import TreeNet
 
 class InterpreterUnit(nn.Module):
 
-    def forward(self, arities, inputs, children):
+    def forward(self, inputs, children, arities):
         n = arities.size(0)
         outputs = []
         for i in range(n):
@@ -92,7 +92,7 @@ class LinearSumUnit(nn.Module):
         self.fc1 = nn.Linear(input_dim, memory_dim)
         self.fc2 = nn.Linear(memory_dim, memory_dim)
 
-    def forward(self, arities, inputs, children):
+    def forward(self, inputs, children, arities):
         sum_children = torch.sum(torch.stack(children, dim=0), dim=0)
         return self.fc1(inputs) + self.fc2(sum_children)
 
