@@ -28,10 +28,10 @@ class InterpreterUnit(nn.Module):
                 outputs.append(x[3:])
         return torch.stack(outputs, dim=0)
 
-class TestTreeNetEncoderUnit(unittest.TestCase):
+class FirstTestTreeNetEncoderUnit(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestTreeNetEncoderUnit, self).__init__(*args, **kwargs)
+        super(FirstTestTreeNetEncoderUnit, self).__init__(*args, **kwargs)
 
         def value(tree):
             out = torch.IntTensor(4)
@@ -96,10 +96,10 @@ class LinearSumUnit(nn.Module):
         sum_children = torch.sum(torch.stack(children, dim=0), dim=0)
         return self.fc1(inputs) + self.fc2(sum_children)
 
-class TestTreeNetEncoderUnit(unittest.TestCase):
+class SecondTestTreeNetEncoderUnit(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestTreeNetEncoderUnit, self).__init__(*args, **kwargs)
+        super(SecondTestTreeNetEncoderUnit, self).__init__(*args, **kwargs)
 
         self.encoder = TreeEncoder(lambda x: (x[0],), lambda x: x[1])
 
@@ -122,3 +122,6 @@ class TestTreeNetEncoderUnit(unittest.TestCase):
         self.assertTrue(net.unit.fc1.bias.grad is None)
         loss.backward()
         self.assertTrue(net.unit.fc1.bias.grad is not None)
+
+if __name__ == '__main__':
+    unittest.main()
