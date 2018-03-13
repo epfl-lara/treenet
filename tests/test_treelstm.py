@@ -25,3 +25,6 @@ class TestTreeLSTM(unittest.TestCase):
         result = net.forward(inputs, arities)
 
         self.assertEqual(result.size(), torch.Size([4, 7]))
+
+if __name__ == '__main__':
+    unittest.main()
