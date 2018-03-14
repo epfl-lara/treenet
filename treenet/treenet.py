@@ -67,8 +67,14 @@ class TreeNet(nn.Module):
             batch_first (bool): If ``True``, then `inputs` and `arities`
                 are expected to have the batch dimension first.
 
+        Note:
+            Inputs and arities of nodes are expected to appear in
+            right-first post-order. See the `treenet.encoder`
+            module for building a suitable encoder.
+
         Returns:
-            Variable: The output features, of shape `(batch_size, output_size)`.
+            Variable: The output features,
+                of shape `(batch_size, output_size)`.
         """
 
         if batch_first:
