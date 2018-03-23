@@ -18,10 +18,7 @@ setup(
     long_description=read('README.rst'),
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Topic :: Utilities",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Programming Language :: Python 2",
-        "Programming Language :: Python 3",
     ],
     project_urls={
         "Source": 'https://github.com/epfl-lara/treenet',
