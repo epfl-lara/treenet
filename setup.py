@@ -13,6 +13,7 @@ setup(
     license = "GPLv3",
     keywords = "recursive neural network tree lstm tree-lstm",
     url = "https://github.com/epfl-lara/treenet",
+    download_url = "https://github.com/epfl-lara/treenet/archive/0.0.1.tar.gz",
     packages=['treenet', 'tests'],
     long_description=read('README.rst'),
     classifiers=[
