@@ -38,17 +38,25 @@ class TreeLSTMUnit(nn.Module):
         self.uu_nets = []
         self.uf_nets = []
 
-        for _ in range(branching_factor):
+        for i in range(branching_factor):
             ufs = []
-            for _ in range(branching_factor):
-                ufs.append(nn.Linear(self.memory_size, self.memory_size,
-                                     bias=False))
-            self.ui_nets.append(nn.Linear(self.memory_size, self.memory_size,
-                                          bias=False))
-            self.uo_nets.append(nn.Linear(self.memory_size, self.memory_size,
-                                          bias=False))
-            self.uu_nets.append(nn.Linear(self.memory_size, self.memory_size,
-                                          bias=False))
+            for j in range(branching_factor):
+                uf = nn.Linear(self.memory_size, self.memory_size, bias=False)
+                self.add_module("uf_net_{}_{}".format(i, j), uf)
+                ufs.append(uf)
+
+            ui = nn.Linear(self.memory_size, self.memory_size, bias=False)
+            self.add_module("ui_net_{}".format(i), ui)
+            self.ui_nets.append(ui)
+
+            uo = nn.Linear(self.memory_size, self.memory_size, bias=False)
+            self.add_module("uo_net_{}".format(i), uo)
+            self.uo_nets.append(uo)
+
+            uu = nn.Linear(self.memory_size, self.memory_size, bias=False)
+            self.add_module("uu_net_{}".format(i), uu)
+            self.uu_nets.append(uu)
+
             self.uf_nets.append(ufs)
 
         for p in self.parameters():
