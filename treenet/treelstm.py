@@ -3,7 +3,6 @@
 import torch
 from torch import nn
 from torch.autograd import Variable
-import torch.nn.functional as F
 
 from .treenet import TreeNet
 
@@ -80,10 +79,10 @@ class TreeLSTMUnit(nn.Module):
             for l, other_child in enumerate(children):
                 other_child_h, _ = torch.chunk(child, 2, dim=1)
                 f.add_(self.uf_nets[k][l](other_child_h))
-            fc_sum.add(F.sigmoid(f) * child_c)
+            fc_sum.add(torch.sigmoid(f) * child_c)
 
-        c = F.sigmoid(i) * F.tanh(u) + fc_sum
-        h = F.sigmoid(o) * F.tanh(c)
+        c = torch.sigmoid(i) * torch.tanh(u) + fc_sum
+        h = torch.sigmoid(o) * torch.tanh(c)
         return torch.cat([h, c], dim=1)
 
 class TreeLSTM(TreeNet):

@@ -6,14 +6,14 @@ def read(fname):
 
 setup(
     name = "treenet",
-    version = "0.0.2",
+    version = "0.0.3",
     author = "Romain Edelmann",
     author_email = "romain.edelmann@epfl.ch",
     description = "Recursive Neural Networks for PyTorch",
     license = "GPLv3",
     keywords = "recursive neural network tree lstm tree-lstm",
     url = "https://github.com/epfl-lara/treenet",
-    download_url = "https://github.com/epfl-lara/treenet/archive/0.0.2.tar.gz",
+    download_url = "https://github.com/epfl-lara/treenet/archive/0.0.3.tar.gz",
     packages=['treenet', 'tests'],
     long_description=read('README.rst'),
     classifiers=[
@@ -25,6 +25,6 @@ setup(
         "Tracker": 'https://github.com/epfl-lara/treenet/issues',
     },
     install_requires=[
-        "torch>=0.3"
+        "torch>=0.4"
     ]
 )
