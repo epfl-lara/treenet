@@ -67,7 +67,7 @@ class TreeLSTMUnit(nn.Module):
         u = self.wu_net(inputs)
 
         f_base = self.wf_net(inputs)
-        fc_sum = inputs.new_zeros(self.memory_size, requires_grad=True)
+        fc_sum = inputs.new_zeros(self.memory_size)
         for k, child in enumerate(children):
             child_h, child_c = torch.chunk(child, 2, dim=1)
             i.add_(self.ui_nets[k](child_h))
