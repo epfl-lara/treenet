@@ -206,12 +206,12 @@ class TestTupleEncoder(unittest.TestCase):
             [17, 34, 18],
             [42, 84, 43]])
 
-class TestByteTensorEncoder(unittest.TestCase):
+class TestLongTensorEncoder(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestByteTensorEncoder, self).__init__(*args, **kwargs)
+        super(TestLongTensorEncoder, self).__init__(*args, **kwargs)
         self.encoder = TreeEncoder(
-            lambda x: torch.ByteTensor([x[0], x[0] * 2, x[0] + 1]),
+            lambda x: torch.LongTensor([x[0], x[0] * 2, x[0] + 1]),
             lambda x: x[1])
 
     def test_encode_tree(self):
@@ -230,8 +230,8 @@ class TestByteTensorEncoder(unittest.TestCase):
             [12, 24, 13],
             [17, 34, 18],
             [42, 84, 43]])
-        self.assertTrue(type(values) is torch.ByteTensor)
-        self.assertTrue(type(arities) is torch.LongTensor)
+        self.assertTrue(type(values) is torch.Tensor)
+        self.assertTrue(type(arities) is torch.Tensor)
 
     def test_encode_batch(self):
         tree1 = (42, [(17, []),
@@ -243,8 +243,8 @@ class TestByteTensorEncoder(unittest.TestCase):
                                   (10, [])])]),
                       (56, [])])
         values, arities = self.encoder.encode_batch([tree1, tree2])
-        self.assertTrue(type(values) is torch.ByteTensor)
-        self.assertTrue(type(arities) is torch.LongTensor)
+        self.assertTrue(type(values) is torch.Tensor)
+        self.assertTrue(type(arities) is torch.Tensor)
 
 if __name__ == '__main__':
     unittest.main()

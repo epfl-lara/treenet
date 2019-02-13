@@ -2,7 +2,6 @@
 
 import torch
 from torch import nn
-from torch.autograd import Variable
 
 class TreeNet(nn.Module):
     """Class for recursive neural networks with n-ary tree structure.
@@ -18,12 +17,12 @@ class TreeNet(nn.Module):
     Note:
         The `unit` network specifies what should be done for each node of
         the input trees. It receives as input three parameters:
-            - inputs: A Variable containing the input features of
+            - inputs: A Tensor containing the input features of
                 the current nodes. Of shape `(batch_size, input_size)`.
-            - children: A list, of size `branching_factor`, of Variables
+            - children: A list, of size `branching_factor`, of Tensors
                 containing the output features of the children of the
                 current nodes.
-                Each Variable has the shape `(batch_size, output_size)`.
+                Each Tensor has the shape `(batch_size, output_size)`.
                 If a node has less arity than the `branching_factor`,
                 the features corresponding to children absent from the
                 node are guaranteed to have magnitude zero.
@@ -60,7 +59,7 @@ class TreeNet(nn.Module):
         """Feed the network with encoded tree-like objects.
 
         Args:
-            inputs (Variable): The features.
+            inputs (Tensor): The features.
                 Should be of shape `(time, batch_size, input_size)`.
             arities (LongTensor): The arities of the nodes.
                 Should be of shape `(time, batch_size)`.
@@ -73,7 +72,7 @@ class TreeNet(nn.Module):
             module for building a suitable encoder.
 
         Returns:
-            Variable: The output features,
+            Tensor: The output features,
                 of shape `(batch_size, output_size)`.
         """
 
@@ -91,18 +90,15 @@ class TreeNet(nn.Module):
         k = arities.new(range(B))
 
         # Memory will contain the state of every node.
-        memory = Variable(inputs.data.new(T, B, self.output_size))
-        memory.fill_(0)
+        memory = inputs.new_zeros(T, B, self.output_size)
 
         # The stack maintains pointers to the memory for unmerged subtrees.
         # It contains extra entries, to avoid out of bounds accesses.
-        stack = arities.new(B, T + self.branching_factor)
-        stack.fill_(0)
+        stack = arities.new_zeros(B, T + self.branching_factor)
 
         # Points to the head of the stack.
-        stack_pointer = arities.new(B)
         # Starts at the given index in order to avoid out of bounds reads.
-        stack_pointer.fill_(self.branching_factor - 1)
+        stack_pointer = arities.new_full((B,), self.branching_factor - 1)
 
         for t in range(T):
             arity = arities[t]
@@ -111,10 +107,9 @@ class TreeNet(nn.Module):
             entries = []
             for i in range(self.branching_factor):
                 entry = memory[stack[k, stack_pointer - i], k]
-                mask = entry.data.new(B)
+                mask = entry.new_empty(B)
                 mask.copy_(arity > i)
                 mask = mask.unsqueeze(1).expand(entry.size())
-                mask = Variable(mask)
                 entries.append(entry * mask)
 
             # Obtain the state for the node.
@@ -124,10 +119,9 @@ class TreeNet(nn.Module):
             # appropriately masked.
             if type(new_entry) is list or type(new_entry) is tuple:
                 for i, entry in enumerate(new_entry):
-                    factors = entry.data.new(B)
+                    factors = entry.new_empty(B)
                     factors.copy_(arity == i)
                     factors = factors.unsqueeze(1).expand(entry.size())
-                    factors = Variable(factors)
                     memory[t] = memory[t] + (entry * factors)
             else:
                 memory[t] = new_entry

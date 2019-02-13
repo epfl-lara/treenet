@@ -2,7 +2,6 @@
 
 import torch
 from torch import nn
-from torch.autograd import Variable
 
 from .treenet import TreeNet
 
@@ -59,7 +58,7 @@ class TreeLSTMUnit(nn.Module):
             self.uf_nets.append(ufs)
 
         for p in self.parameters():
-          nn.init.normal(p)
+          nn.init.normal_(p)
 
     def forward(self, inputs, children, arities):
 
@@ -68,7 +67,7 @@ class TreeLSTMUnit(nn.Module):
         u = self.wu_net(inputs)
 
         f_base = self.wf_net(inputs)
-        fc_sum = Variable(inputs.data.new(self.memory_size).fill_(0))
+        fc_sum = inputs.new_zeros(self.memory_size, requires_grad=True)
         for k, child in enumerate(children):
             child_h, child_c = torch.chunk(child, 2, dim=1)
             i.add_(self.ui_nets[k](child_h))

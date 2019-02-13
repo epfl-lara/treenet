@@ -4,7 +4,6 @@ import unittest
 
 import torch
 from torch import nn
-from torch.autograd import Variable
 
 from treenet.encoder import TreeEncoder
 from treenet.treenet import TreeNet
@@ -74,12 +73,9 @@ class TestTreeNetInterpreterUnit(unittest.TestCase):
         net = TreeNet(1, 2, InterpreterUnit())
 
         inputs, arities = self.encoder.encode_batch([tree1, tree2, tree3])
-        inputs = Variable(inputs)
         outputs = net(inputs, arities)
 
         self.assertEqual(outputs.size(), torch.Size([3, 1]))
-        self.assertTrue(type(outputs) is Variable)
-        self.assertTrue(type(outputs.data) is torch.IntTensor)
 
         self.assertEqual(outputs.data[0, 0], 42)
         self.assertEqual(outputs.data[1, 0], -11)
@@ -112,12 +108,11 @@ class TestTreeNetLinearSumUnit(unittest.TestCase):
                      (70, [])])
 
         inputs, arities = self.encoder.encode_batch([tree])
-        inputs = Variable(inputs)
         outputs = net(inputs, arities)
 
         self.assertEqual(outputs.size(), torch.Size([1, 3]))
 
-        target = Variable(torch.Tensor([[155, 12, 72]]))
+        target = torch.Tensor([[155, 12, 72]])
         loss = nn.functional.mse_loss(outputs, target)
         net.zero_grad()
         self.assertTrue(net.unit.fc1.bias.grad is None)
@@ -135,11 +130,11 @@ class BasicTreeNet(nn.Module):
     def forward(self, tree):
         arity = len(tree[1])
         children_results = [self.forward(child) for child in tree[1]]
-        children_results_padding = [Variable(torch.zeros(1, self.output_size))\
+        children_results_padding = [torch.zeros(1, self.output_size)\
             for _ in range(self.branching_factor - arity)]
         children_results.extend(children_results_padding)
         arities = torch.LongTensor([arity])
-        inputs = torch.autograd.Variable(tree[0].unsqueeze(0))
+        inputs = tree[0].unsqueeze(0)
         return self.unit(inputs, children_results, arities)
 
 class TestEquivalenceTreeNetBasic(unittest.TestCase):
@@ -161,7 +156,6 @@ class TestEquivalenceTreeNetBasic(unittest.TestCase):
 
         net = TreeNet(5, 3, unit)
         inputs, arities = self.encoder.encode_batch([tree])
-        inputs = Variable(inputs)
         res_net = net(inputs, arities)
 
         basic = BasicTreeNet(5, 3, unit)
@@ -175,7 +169,7 @@ class TestEquivalenceTreeNetBasic(unittest.TestCase):
 
 
         # Test backward direction.
-        target = Variable(torch.randn(1, 5))
+        target = torch.randn(1, 5)
 
         # Getting gradients after using net.
         unit.zero_grad()
@@ -190,7 +184,7 @@ class TestEquivalenceTreeNetBasic(unittest.TestCase):
         grads_basic = [p.grad.data.clone() for p in unit.parameters()]
 
         # Checking that gradients are within a small epsilon of each other.
-        epsilon = 0.0001
+        epsilon = 0.001
         for grad_net, grad_basic in zip(grads_net, grads_basic):
             self.assertTrue(((grad_net - grad_basic).abs() < epsilon).all())
 

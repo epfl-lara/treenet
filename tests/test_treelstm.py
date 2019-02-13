@@ -20,7 +20,6 @@ class TestTreeLSTM(unittest.TestCase):
         tree4 = ((31, 32, 33), [])
 
         inputs, arities = encoder.encode_batch([tree1, tree2, tree3, tree4])
-        inputs = torch.autograd.Variable(inputs)
 
         result = net.forward(inputs, arities)
 
@@ -39,7 +38,6 @@ class TestTreeLSTM(unittest.TestCase):
         tree4 = ((31, 32, 33), [])
 
         inputs, arities = encoder.encode_batch([tree1, tree2, tree3, tree4])
-        inputs = torch.autograd.Variable(inputs)
         inputs, arities = inputs.cuda(), arities.cuda()
 
         result = net.forward(inputs, arities)
