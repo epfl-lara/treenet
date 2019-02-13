@@ -77,8 +77,8 @@ class TreeLSTMUnit(nn.Module):
 
             f = f_base
             for l, other_child in enumerate(children):
-                other_child_h, _ = torch.chunk(child, 2, dim=1)
-                f.add_(self.uf_nets[k][l](other_child_h))
+                other_child_h, _ = torch.chunk(other_child, 2, dim=1)
+                f = f.add(self.uf_nets[k][l](other_child_h))
             fc_sum.add(torch.sigmoid(f) * child_c)
 
         c = torch.sigmoid(i) * torch.tanh(u) + fc_sum
